@@ -1,0 +1,35 @@
+{
+  "name": "m9vends_iot_service",
+  "version": "1.0.0",
+  "description": "IoT Provisioning and Management Backend Service for M9Vends",
+  "homepage": "https://github.com/Stelyx-Systems/M9Vends-IoT-Backend-Service#readme",
+  "bugs": {
+    "url": "https://github.com/Stelyx-Systems/M9Vends-IoT-Backend-Service/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stelyx-Systems/M9Vends-IoT-Backend-Service.git"
+  },
+  "license": "ISC",
+  "author": "M9Vends",
+  "type": "module",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc --build",
+    "start": "node dist/app.js"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^25.9.2",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.3"
+  }
+}
