@@ -2,8 +2,8 @@ import express from 'express';
 import controller from './routes/controller.js'
 import 'dotenv/config'
 import { Mongo_Connect } from './config/DB.config.js';
+import { errorHandler } from './middlewares/errorHandler.middleware.js';
 await Mongo_Connect();
-const PORT = process.env.PORT as string | 5000
 const app = express()
 app.use(express.json())
 
@@ -12,6 +12,5 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api', controller)
-app.listen(PORT, () => {
-    console.log(`server started @ http://localhost:${PORT}`)
-})
+app.use(errorHandler)
+export default app

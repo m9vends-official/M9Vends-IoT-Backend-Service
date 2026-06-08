@@ -1,7 +1,7 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "tsx ./src/app.ts",
+  "exec": "tsx ./src/server.ts",
   "signal": "SIGTERM",
   "restartable": "rs"
 }

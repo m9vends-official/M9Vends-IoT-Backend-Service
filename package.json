@@ -13,19 +13,28 @@
   "license": "ISC",
   "author": "M9Vends",
   "type": "module",
-  "main": "dist/app.js",
+  "main": "dist/server.js",
   "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:verbose": "vitest run --reporter=verbose",
     "dev": "nodemon",
     "build": "tsc --build",
-    "start": "node dist/app.js"
+    "start": "node dist/server.js"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^25.9.2",
+    "@types/supertest": "^7.2.0",
+    "@vitest/coverage-v8": "^4.1.8",
     "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
