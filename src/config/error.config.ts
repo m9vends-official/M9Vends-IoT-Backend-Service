@@ -2,7 +2,10 @@ export class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean; // distinguishes known vs unknown errors
 
-  constructor(message: string, statusCode: number, isOperational = true) {
+  constructor(
+    message: string = "Something Went Wrong",
+    statusCode: number = 500,
+    isOperational = true) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
