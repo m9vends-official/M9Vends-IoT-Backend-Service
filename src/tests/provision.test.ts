@@ -2,6 +2,8 @@ import { vi, describe, it, expect, beforeEach, beforeAll, afterAll } from "vites
 import request from "supertest";
 import mongoose from "mongoose";
 
+let mockPublishShouldFail = false;
+
 vi.mock("mqtt", () => {
   const mockMqttClient = {
     on: vi.fn((event, callback) => {
@@ -14,7 +16,14 @@ vi.mock("mqtt", () => {
       if (callback) callback(null);
       return mockMqttClient;
     }),
-    publish: vi.fn(),
+    publish: vi.fn((topic, message, options, callback) => {
+      const cb = typeof options === 'function' ? options : callback;
+      if (mockPublishShouldFail) {
+        cb(new Error("MQTT Publish Failed"));
+      } else {
+        cb(null);
+      }
+    }),
     end: vi.fn(),
   };
   return {
@@ -33,16 +42,21 @@ let app: any;
 
 describe("POST /api/device/provision", () => {
   beforeAll(async () => {
-    process.env.MONGODB_STRING = "mongodb://localhost:27017/test_provision";
+    const dbName = `test_provision_${Math.random().toString(36).substring(2, 9)}`;
+    process.env.MONGODB_STRING = `mongodb://localhost:27017/${dbName}`;
     app = (await import("../app.js")).default;
   });
 
   beforeEach(async () => {
     await Devices.deleteMany({});
     await User.deleteMany({});
+    mockPublishShouldFail = false;
   });
 
   afterAll(async () => {
+    try {
+      await mongoose.connection.db?.dropDatabase();
+    } catch {}
     await mongoose.connection.close();
   });
 
@@ -138,5 +152,25 @@ describe("POST /api/device/provision", () => {
 
     const updatedUser = await User.findById(user._id);
     expect(updatedUser?.devices.map(d => d.toString())).toContain(device._id.toString());
+  });
+
+  it("should return 500 error if MQTT publish fails", async () => {
+    mockPublishShouldFail = true;
+    const user = await User.create({ email: "test@user.com", devices: [] });
+    const device = await Devices.create({
+      serialNumber: "SN12345",
+      model: "Model-X",
+      mac: "00:11:22:33:44:55",
+      ip: "192.168.1.1",
+      status: "offline",
+      components: []
+    });
+
+    const res = await request(app)
+      .post("/api/device/provision")
+      .send({ serialNumber: "SN12345", userID: user._id.toString() });
+
+    expect(res.status).toBe(500);
+    expect(res.body.message).toBe("Couldn't Reach Device, Please try restarting it...");
   });
 });

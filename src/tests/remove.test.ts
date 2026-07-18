@@ -32,7 +32,8 @@ let app: any;
 
 describe("DELETE /api/device/:id", () => {
   beforeAll(async () => {
-    process.env.MONGODB_STRING = "mongodb://localhost:27017/test_remove";
+    const dbName = `test_remove_${Math.random().toString(36).substring(2, 9)}`;
+    process.env.MONGODB_STRING = `mongodb://localhost:27017/${dbName}`;
     app = (await import("../app.js")).default;
   });
 
@@ -42,6 +43,9 @@ describe("DELETE /api/device/:id", () => {
   });
 
   afterAll(async () => {
+    try {
+      await mongoose.connection.db?.dropDatabase();
+    } catch {}
     await mongoose.connection.close();
   });
 

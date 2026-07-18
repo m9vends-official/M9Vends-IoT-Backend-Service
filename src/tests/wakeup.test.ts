@@ -32,7 +32,8 @@ let app: any;
 
 describe("POST /api/device/wake-up & Device Status Services", () => {
   beforeAll(async () => {
-    process.env.MONGODB_STRING = "mongodb://localhost:27017/test_wakeup";
+    const dbName = `test_wakeup_${Math.random().toString(36).substring(2, 9)}`;
+    process.env.MONGODB_STRING = `mongodb://localhost:27017/${dbName}`;
     app = (await import("../app.js")).default;
   });
 
@@ -41,6 +42,9 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
   });
 
   afterAll(async () => {
+    try {
+      await mongoose.connection.db?.dropDatabase();
+    } catch {}
     await mongoose.connection.close();
   });
 
@@ -65,6 +69,16 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(res.body.message).toBe("Created New Device");
       expect(res.body.isProvisioned).toBe(false);
       expect(res.body.deviceVID).toBeDefined();
+      expect(res.body.mqtt).toEqual({
+        url: "localhost",
+        port: 1883,
+        username: "Device",
+        password: "Device@123"
+      });
+      expect(res.body.topics).toEqual({
+        pub: ["telemetry", "status"],
+        sub: ["commands"]
+      });
 
       const dbDevice = await Devices.findById(res.body.deviceVID);
       expect(dbDevice).toBeDefined();
@@ -98,6 +112,17 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(res.body.message).toBe("Wakeup Existing Device");
       expect(res.body.isProvisioned).toBe(false);
       expect(res.body.deviceVID).toBe(existingDevice._id.toString());
+      expect(res.body.mqtt).toEqual({
+        url: "localhost",
+        port: 1883,
+        username: "Device",
+        password: "Device@123"
+      });
+      expect(res.body.topics).toEqual({
+        pub: ["telemetry", "status"],
+        sub: ["commands"]
+      });
+      expect(res.body.kioskBrowserURL).toBe("https://kiosk.m9vends.com/undefined");
     });
 
     it("should update the IP of the existing device if the new IP is different", async () => {
@@ -130,7 +155,7 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(dbDevice?.ip).toBe("192.168.1.222");
     });
 
-    it("should return isProvisioned true and owner if existing device is owned", async () => {
+    it("should return isProvisioned true and kioskBrowserURL if existing device is owned", async () => {
       const fakeOwnerId = new mongoose.Types.ObjectId();
       const existingDevice = await Devices.create({
         serialNumber: "SN-WAKE-1",
@@ -158,7 +183,7 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(res.status).toBe(200);
       expect(res.body.message).toBe("Wakeup Existing Device");
       expect(res.body.isProvisioned).toBe(true);
-      expect(res.body.owner).toBe(fakeOwnerId.toString());
+      expect(res.body.kioskBrowserURL).toBe(`https://kiosk.m9vends.com/${fakeOwnerId.toString()}`);
     });
 
     it("should return error if payload validation fails (e.g. missing required fields)", async () => {

@@ -1,26 +1,55 @@
 import mongoose from "mongoose";
-import type { device, deviceInfo, mqttCredentials } from "../types/device.type.js";
+import type { device, deviceInfo, mqttCredentials, mqttDeviceCredentials } from "../types/device.type.js";
 import 'dotenv/config'
 import { AppError } from "../config/error.config.js";
 import jwt from 'jsonwebtoken'
 import { Devices } from "../models/device.model.js";
 import { User } from "../models/user.model.js";
 import type { StringValue } from 'ms'
+import { topicsForDevice } from "../config/topics.config.js";
+import mqttClient from "../config/mqttBroker.config.js";
 
-export const createDevice = async (device: Omit<device, "owner">): Promise<deviceInfo> => {
+const getMqttDeviceCredentials = (): mqttDeviceCredentials => {
+    try {
+        return {
+            url: process.env.MQTT_BROKER_URL as string,
+            port: parseInt(process.env.MQTT_BROKER_PORT as string),
+            username: process.env.MQTT_BROKER_Device_USERNAME as string,
+            password: process.env.MQTT_BROKER_Device_PASSWORD as string
+        }
+    } catch (e) {
+        throw new Error("Env variables Not Configured")
+    }
+}
+
+export const wakeUpDevice = async (device: Omit<device, "owner">): Promise<deviceInfo> => {
     try {
         const alreadyDevice = await Devices.findOne({ serialNumber: device.serialNumber })
         if (alreadyDevice) {
             const isProvisioned = alreadyDevice.owner ? true : false
+            const kioskBrowserURL = (process.env.KIOSK_BASE_URL as string) + alreadyDevice.owner
             if (alreadyDevice.ip !== device.ip) {
                 const info = await Devices.updateOne({ serialNumber: device.serialNumber }, { ip: device.ip })
             }
-            return { deviceVID: alreadyDevice._id, message: "Wakeup Existing Device", isProvisioned, owner: alreadyDevice.owner }
+            return {
+                message: "Wakeup Existing Device",
+                deviceVID: alreadyDevice._id,
+                mqtt: getMqttDeviceCredentials(),
+                topics: topicsForDevice,
+                isProvisioned,
+                kioskBrowserURL,
+            }
         }
         const { _id } = await Devices.create({
             ...device
         })
-        return { deviceVID: _id, message: "Created New Device", isProvisioned: false }
+        return {
+            message: "Created New Device",
+            deviceVID: _id,
+            mqtt: getMqttDeviceCredentials(),
+            topics: topicsForDevice,
+            isProvisioned: false
+        }
     } catch (e) {
         throw e
     }
@@ -47,6 +76,24 @@ export const provisionDevice = async (serialNumber: string, userID: string) => {
             Devices.updateOne({ serialNumber }, { owner: id }),
             User.updateOne({ _id: userID }, { $push: { devices: device._id } })
         ])
+        async function publish(id: string) {
+            return new Promise((resolve, reject) => {
+                const kioskBrowserURL = (process.env.KIOSK_BASE_URL as string) + userID
+                mqttClient.publish(
+                    `device/${id}/commands`,
+                    JSON.stringify({ message: "Provisioning Complete", kioskBrowserURL }),
+                    { qos: 2 },
+                    (error) => {
+                        if (error) {
+                            reject(new AppError(`Couldn't Reach Device, Please try restarting it...`, 500))
+                        } else {
+                            resolve("")
+                        }
+                    }
+                )
+            })
+        }
+        await publish(device.id)
         return device._id
     } catch (e) {
         throw e

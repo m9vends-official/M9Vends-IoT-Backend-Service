@@ -50,8 +50,18 @@ The request body must be a JSON object detailing the hardware configuration and 
 #### Case 1: Device is registered for the first time
 ```json
 {
-  "deviceVID": "60d5ec49f3e4e9001f3b2e99",
   "message": "Created New Device",
+  "deviceVID": "60d5ec49f3e4e9001f3b2e99",
+  "mqtt": {
+    "url": "localhost",
+    "port": 1883,
+    "username": "Device",
+    "password": "Device@123"
+  },
+  "topics": {
+    "pub": ["telemetry", "status"],
+    "sub": ["commands"]
+  },
   "isProvisioned": false
 }
 ```
@@ -59,8 +69,18 @@ The request body must be a JSON object detailing the hardware configuration and 
 #### Case 2: Device already exists in DB but is not owned (unprovisioned)
 ```json
 {
-  "deviceVID": "60d5ec49f3e4e9001f3b2e99",
   "message": "Wakeup Existing Device",
+  "deviceVID": "60d5ec49f3e4e9001f3b2e99",
+  "mqtt": {
+    "url": "localhost",
+    "port": 1883,
+    "username": "Device",
+    "password": "Device@123"
+  },
+  "topics": {
+    "pub": ["telemetry", "status"],
+    "sub": ["commands"]
+  },
   "isProvisioned": false
 }
 ```
@@ -68,10 +88,20 @@ The request body must be a JSON object detailing the hardware configuration and 
 #### Case 3: Device already exists in DB and is owned (provisioned)
 ```json
 {
-  "deviceVID": "60d5ec49f3e4e9001f3b2e99",
   "message": "Wakeup Existing Device",
+  "deviceVID": "60d5ec49f3e4e9001f3b2e99",
+  "mqtt": {
+    "url": "localhost",
+    "port": 1883,
+    "username": "Device",
+    "password": "Device@123"
+  },
+  "topics": {
+    "pub": ["telemetry", "status"],
+    "sub": ["commands"]
+  },
   "isProvisioned": true,
-  "owner": "60d5ec49f3e4e9001f3b2e75"
+  "kioskBrowserURL": "https://kiosk.m9vends.com/60d5ec49f3e4e9001f3b2e75"
 }
 ```
 

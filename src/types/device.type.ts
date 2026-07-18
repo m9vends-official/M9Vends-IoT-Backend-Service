@@ -18,7 +18,12 @@ export interface device {
         catagory: string;
         name: string;
         type: "sensor" | "accutator";
-    }[]
+    }[],
+    topics?: {
+        pub: string[],
+        sub: string[],
+    };
+    url: string;
 }
 
 export interface mqttCredentials {
@@ -26,9 +31,21 @@ export interface mqttCredentials {
     expiresIn: StringValue | number
 }
 
+export interface mqttDeviceCredentials {
+    url: string;
+    port: number;
+    username: string;
+    password: string;
+}
+
 export interface deviceInfo {
     message: string;
     deviceVID: string | mongoose.Types.ObjectId;
+    mqtt: mqttDeviceCredentials;
+    topics?: {
+        pub: string[],
+        sub: string[],
+    };
     isProvisioned: boolean;
-    owner?: mongoose.Types.ObjectId | undefined
+    kioskBrowserURL?: string | undefined;
 }

@@ -10,18 +10,24 @@ const options: mqtt.IClientOptions = {
     password: process.env.MQTT_BROKER_PASSWORD as string
 }
 
-const mqttClient = mqtt.connect(options);
+export const mqttClient = mqtt.connect(options);
 
 mqttClient.on("connect", () => {
-    console.log("MQTT Broker Connected");
+    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "production") {
+        console.log(">>> \x1b[32m MQTT Broker Connected \x1b[0m")
+    }
 });
 
 mqttClient.subscribe('device/+/status', (err) => {
     if (!err) {
-        console.log("Subscribed device Status")
+        if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "production") {
+            console.log(">>> \x1b[32m Subscribed device Status \x1b[0m")
+        }
     } else {
-        console.log('\x1b[31m%s\x1b[0m', "\n MQTT Subscription Error")
-        console.error(err);
+        if (process.env.NODE_ENV === "development") {
+            console.log('\x1b[31m%s\x1b[0m', "\n MQTT Subscription Error")
+            console.error(err);
+        }
     }
 })
 
@@ -33,14 +39,18 @@ mqttClient.on("message", async (topic, message) => {
             await updateDeviceStatus(topicSplitArray[1], message.toString())
         }
     } catch (err) {
-        console.log('\x1b[31m%s\x1b[0m', "\n MQTT On Message Error")
-        console.error(err);
+        if (process.env.NODE_ENV === "development") {
+            console.log('\x1b[31m%s\x1b[0m', "\n MQTT On Message Error")
+            console.error(err);
+        }
     }
 })
 
 mqttClient.on("error", (error) => {
-    console.log('\x1b[31m%s\x1b[0m', "\n MQTT Connection Error")
-    console.error(error);
+    if (process.env.NODE_ENV === "development") {
+        console.log('\x1b[31m%s\x1b[0m', "\n MQTT Connection Error")
+        console.error(error);
+    }
 });
 
 export default mqttClient

@@ -88,3 +88,13 @@ Returned if the device with the specified `serialNumber` is already provisioned 
   "message": "Device Already Owned"
 }
 ```
+
+#### 500 Internal Server Error (Couldn't Reach Device)
+
+Returned if the service fails to contact the device via MQTT.
+
+```json
+{
+  "message": "Couldn't Reach Device, Please try restarting it..."
+}
+```
