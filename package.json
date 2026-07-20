@@ -1,7 +1,7 @@
 {
   "name": "m9vends_iot_service",
   "version": "1.0.0",
-  "description": "IoT Provisioning and Management Backend Service for M9Vends",
+  "description": "IoT Provisioning and Management Backend Service for M9Vends developed by Atharva Kaplay, Founder, Stelyx Systems",
   "homepage": "https://github.com/Stelyx-Systems/M9Vends-IoT-Backend-Service#readme",
   "bugs": {
     "url": "https://github.com/Stelyx-Systems/M9Vends-IoT-Backend-Service/issues"

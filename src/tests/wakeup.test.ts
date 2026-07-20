@@ -70,10 +70,10 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(res.body.isProvisioned).toBe(false);
       expect(res.body.deviceVID).toBeDefined();
       expect(res.body.mqtt).toEqual({
-        url: "localhost",
-        port: 1883,
-        username: "Device",
-        password: "Device@123"
+        url: process.env.MQTT_BROKER_URL,
+        port: parseInt(process.env.MQTT_BROKER_PORT as string),
+        username: process.env.MQTT_BROKER_Device_USERNAME,
+        password: process.env.MQTT_BROKER_Device_PASSWORD
       });
       expect(res.body.topics).toEqual({
         pub: ["telemetry", "status"],
@@ -89,7 +89,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const existingDevice = await Devices.create({
         serialNumber: "SN-WAKE-1",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "offline",
         components: []
@@ -98,7 +97,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const devicePayload = {
         serialNumber: "SN-WAKE-1",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "online" as const,
         components: []
@@ -113,23 +111,22 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(res.body.isProvisioned).toBe(false);
       expect(res.body.deviceVID).toBe(existingDevice._id.toString());
       expect(res.body.mqtt).toEqual({
-        url: "localhost",
-        port: 1883,
-        username: "Device",
-        password: "Device@123"
+        url: process.env.MQTT_BROKER_URL,
+        port: parseInt(process.env.MQTT_BROKER_PORT as string),
+        username: process.env.MQTT_BROKER_Device_USERNAME,
+        password: process.env.MQTT_BROKER_Device_PASSWORD
       });
       expect(res.body.topics).toEqual({
         pub: ["telemetry", "status"],
         sub: ["commands"]
       });
-      expect(res.body.kioskBrowserURL).toBe("https://kiosk.m9vends.com/undefined");
+      expect(res.body.kioskBrowserURL).toBe(`${process.env.KIOSK_BASE_URL}undefined`);
     });
 
     it("should update the IP of the existing device if the new IP is different", async () => {
       const existingDevice = await Devices.create({
         serialNumber: "SN-WAKE-1",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "offline",
         components: []
@@ -138,7 +135,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const devicePayload = {
         serialNumber: "SN-WAKE-1",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.222", // New IP
         status: "online" as const,
         components: []
@@ -161,7 +157,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
         serialNumber: "SN-WAKE-1",
         model: "Model-T",
         owner: fakeOwnerId,
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "offline",
         components: []
@@ -170,7 +165,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const devicePayload = {
         serialNumber: "SN-WAKE-1",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "online" as const,
         components: []
@@ -183,14 +177,14 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       expect(res.status).toBe(200);
       expect(res.body.message).toBe("Wakeup Existing Device");
       expect(res.body.isProvisioned).toBe(true);
-      expect(res.body.kioskBrowserURL).toBe(`https://kiosk.m9vends.com/${fakeOwnerId.toString()}`);
+      expect(res.body.kioskBrowserURL).toBe(`${process.env.KIOSK_BASE_URL}${fakeOwnerId.toString()}`);
     });
 
     it("should return error if payload validation fails (e.g. missing required fields)", async () => {
       const res = await request(app)
         .post("/api/device/wake-up")
         .send({
-          mac: "11:22:33:44:55:66"
+          model: "Model-T"
         });
 
       expect(res.status).toBe(500);
@@ -203,7 +197,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const device = await Devices.create({
         serialNumber: "SN-STATUS-1",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "offline",
         components: []
@@ -226,7 +219,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const device = await Devices.create({
         serialNumber: "SN-STATUS-2",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "offline",
         components: []
@@ -241,7 +233,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const device = await Devices.create({
         serialNumber: "SN-STATUS-3",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "online",
         components: []
@@ -255,7 +246,6 @@ describe("POST /api/device/wake-up & Device Status Services", () => {
       const device = await Devices.create({
         serialNumber: "SN-STATUS-4",
         model: "Model-T",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "offline",
         components: []

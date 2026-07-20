@@ -5,7 +5,6 @@ export interface device {
     serialNumber: string;
     model: string;
     owner?: mongoose.Types.ObjectId;
-    mac: string;
     ip: string;
     status: "online" | "offline";
     firmware?: {
@@ -19,11 +18,6 @@ export interface device {
         name: string;
         type: "sensor" | "accutator";
     }[],
-    topics?: {
-        pub: string[],
-        sub: string[],
-    };
-    url: string;
 }
 
 export interface mqttCredentials {

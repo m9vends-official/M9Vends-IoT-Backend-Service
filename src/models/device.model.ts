@@ -13,7 +13,6 @@ const deviceSchema = new mongoose.Schema<device>({
         required: true
     },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "Devices" },
-    mac: String,
     ip: String,
     status: {
         type: String,
