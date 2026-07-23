@@ -15,6 +15,7 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
+    "docs:src": "node scripts/generate-src-tree.cjs",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:run": "vitest run",
@@ -35,6 +36,7 @@
     "@vitest/coverage-v8": "^4.1.8",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2",
+    "tree-cli": "^0.6.7",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"

@@ -6,4 +6,4 @@ const userSchema = new mongoose.Schema<user>({
     devices: { type: [mongoose.Schema.Types.ObjectId], ref: "Devices" }
 })
 
-export const User = mongoose.model<user>('User', userSchema)
+export const User = mongoose.model<user>('User', userSchema, "users")

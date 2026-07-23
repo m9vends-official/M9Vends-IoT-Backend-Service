@@ -12,7 +12,7 @@ const deviceSchema = new mongoose.Schema<device>({
         type: String,
         required: true
     },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "Devices" },
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     ip: String,
     status: {
         type: String,
@@ -34,4 +34,4 @@ const deviceSchema = new mongoose.Schema<device>({
     }]
 })
 
-export const Devices = mongoose.model<device>("Devices", deviceSchema)
+export const Devices = mongoose.model<device>("Devices", deviceSchema, "devices")
