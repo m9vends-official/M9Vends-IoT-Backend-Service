@@ -113,7 +113,6 @@ describe("POST /api/device/provision", () => {
       serialNumber: "SN12345",
       model: "Model-X",
       owner: existingOwnerId,
-      mac: "00:11:22:33:44:55",
       ip: "192.168.1.1",
       status: "offline",
       components: []
@@ -132,7 +131,6 @@ describe("POST /api/device/provision", () => {
     const device = await Devices.create({
       serialNumber: "SN12345",
       model: "Model-X",
-      mac: "00:11:22:33:44:55",
       ip: "192.168.1.1",
       status: "offline",
       components: []
@@ -160,7 +158,6 @@ describe("POST /api/device/provision", () => {
     const device = await Devices.create({
       serialNumber: "SN12345",
       model: "Model-X",
-      mac: "00:11:22:33:44:55",
       ip: "192.168.1.1",
       status: "offline",
       components: []

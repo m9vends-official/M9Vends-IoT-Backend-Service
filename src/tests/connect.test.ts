@@ -67,7 +67,6 @@ describe("GET /api/device/connect/:id", () => {
     const device = await Devices.create({
       serialNumber: "SN-CONN-1",
       model: "Model-T",
-      mac: "11:22:33:44:55:66",
       ip: "192.168.1.100",
       status: "offline",
       components: []
@@ -85,7 +84,6 @@ describe("GET /api/device/connect/:id", () => {
       serialNumber: "SN-CONN-2",
       model: "Model-T",
       owner: ownerId,
-      mac: "11:22:33:44:55:66",
       ip: "192.168.1.100",
       status: "offline",
       components: []

@@ -70,7 +70,6 @@ describe("DELETE /api/device/:id", () => {
       serialNumber: "SN-REM-1",
       model: "Model-T",
       owner: user._id,
-      mac: "11:22:33:44:55:66",
       ip: "192.168.1.100",
       status: "offline",
       components: []
@@ -97,7 +96,6 @@ describe("DELETE /api/device/:id", () => {
       serialNumber: "SN-REM-2",
       model: "Model-T",
       owner: user._id,
-      mac: "11:22:33:44:55:66",
       ip: "192.168.1.100",
       status: "offline",
       components: []

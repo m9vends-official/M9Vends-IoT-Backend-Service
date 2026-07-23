@@ -69,7 +69,6 @@ describe("GET /api/device/:type/:id", () => {
       const device = await Devices.create({
         serialNumber: "SN-GET-1",
         model: "Model-X",
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "online",
         components: []
@@ -115,7 +114,6 @@ describe("GET /api/device/:type/:id", () => {
         serialNumber: "SN-GET-1",
         model: "Model-X",
         owner: user._id,
-        mac: "11:22:33:44:55:66",
         ip: "192.168.1.100",
         status: "online",
         components: []
@@ -125,7 +123,6 @@ describe("GET /api/device/:type/:id", () => {
         serialNumber: "SN-GET-2",
         model: "Model-Y",
         owner: user._id,
-        mac: "22:33:44:55:66:77",
         ip: "192.168.1.101",
         status: "offline",
         components: []
