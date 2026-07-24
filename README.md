@@ -1,6 +1,7 @@
 # IoT Provisioning & Management Backend Service
 
-[Directory Structure](docs/SRC_STRUCTURE.md)
+- [Directory Structure](docs/SRC_STRUCTURE.md)
+- [Frontend Integration Guide](docs/mqtt_frontend_connection_guide.md)
 
 Command for generating updated directory structure
 
