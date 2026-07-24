@@ -40,9 +40,7 @@ export const wakeUpDevice = async (device: Omit<device, "owner">): Promise<devic
                 kioskBrowserURL,
             }
         }
-        const { _id } = await Devices.create({
-            ...device
-        })
+        const { _id } = await Devices.create(device)
         return {
             message: "Created New Device",
             deviceVID: _id,
@@ -151,7 +149,23 @@ export const removeDevice = async (deviceID: string, command?: "remove") => {
         if (owner) {
             await User.updateOne({ _id: owner }, { $pull: { devices: _id } })
         }
-
+        async function publish(id: string) {
+            return new Promise((resolve, reject) => {
+                mqttClient.publish(
+                    `device/${id}/commands`,
+                    JSON.stringify({ message: "Unlink" }),
+                    { qos: 2 },
+                    (error) => {
+                        if (error) {
+                            reject(new AppError(`Couldn't Reach Device, Please try restarting it...`, 500))
+                        } else {
+                            resolve("")
+                        }
+                    }
+                )
+            })
+        }
+        await publish(deviceID)
         if (command === "remove") {
             const deleteInfo = await Devices.deleteOne({ _id })
             if (deleteInfo.deletedCount < 1) {

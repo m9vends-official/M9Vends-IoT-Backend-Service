@@ -24,7 +24,6 @@ const deviceSchema = new mongoose.Schema<device>({
         version: String
     },
     components: [{
-        id: Number,
         catagory: String,
         name: String,
         type: {

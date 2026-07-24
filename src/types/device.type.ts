@@ -13,7 +13,6 @@ export interface device {
         lastUpdated: Date;
     };
     components: {
-        id: number;
         catagory: string;
         name: string;
         type: "sensor" | "accutator";
